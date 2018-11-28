@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "resolveJsonModule": true,
+        "lib": ["es5", "es6"],
+        "target": "es2017",
+        "noImplicitAny": true,
+        "outDir": "./dist",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "sourceMap": true,
+        "moduleResolution": "node",
+        "baseUrl": ".",
+        "paths": {
+            "@config/*": ["config/*"],
+            "@controllers/*": ["controllers/*"],
+            "@db/*": ["db/*"],
+            "@routes/*": ["routes/*"],
+            "@services/*": ["services/*"]
+        }
+    },
+    "include": [
+        "./**/*", "../sqe-api/db/sqe-mariadb.ts"
+    ]
+}

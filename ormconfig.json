@@ -1,0 +1,14 @@
+{
+    "name": "default",
+    "type": "mariadb",
+    "host": "localhost",
+    "port": 3307,
+    "username": "root",
+    "password": "none",
+    "database": "SQE_DEV",
+    "synchronize": false,
+    "extra": { "connectionLimit": 40},
+    "entities": [
+        "db/entities/*.ts"
+    ]
+}

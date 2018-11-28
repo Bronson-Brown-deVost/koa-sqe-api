@@ -1,0 +1,55 @@
+{
+    "name": "koa-test",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "start": "ts-node ./app.ts",
+        "serve": "nodemon -e js,json,ts,tsx --exec 'ts-node' ./app.ts",
+        "prod": "pm2 start /home/bronson/.yarn/bin/ts-node --name SQE_API -- ./app.ts",
+        "stop-prod": "pm2 delete SQE_API",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "generate-route": "node bin/generate-route.js",
+        "delete-route": "node bin/delete-route.js"
+    },
+    "_moduleAliases": {
+        "@config": "config",
+        "@controllers": "controllers",
+        "@db": "db",
+        "@routes": "routes",
+        "@services": "services"
+    },
+    "dependencies": {
+        "@koa/cors": "2",
+        "@types/boom": "^7.2.1",
+        "@types/debug": "^0.0.31",
+        "@types/koa": "^2.0.47",
+        "@types/koa-bodyparser": "^4.2.1",
+        "@types/koa-compress": "^2.0.8",
+        "@types/koa-convert": "^1.2.1",
+        "@types/koa-json": "^2.0.18",
+        "@types/koa-logger": "^3.1.1",
+        "@types/koa-router": "^7.0.35",
+        "@types/koa__cors": "^2.2.3",
+        "@types/module-alias": "^2.0.0",
+        "@types/socket.io": "^2.1.0",
+        "boom": "^7.2.2",
+        "debug": "^2.6.3",
+        "koa": "^2.2.0",
+        "koa-bodyparser": "^3.2.0",
+        "koa-compress": "^3.0.0",
+        "koa-convert": "^1.2.0",
+        "koa-json": "^2.0.2",
+        "koa-logger": "^2.0.1",
+        "koa-onerror": "^1.2.1",
+        "koa-router": "^7.1.1",
+        "mariadb": "^2.0.1-beta",
+        "module-alias": "^2.1.0",
+        "reflect-metadata": "^0.1.12",
+        "replace-in-file": "^3.4.2",
+        "socket.io": "^2.1.1",
+        "typeorm": "^0.2.9"
+    },
+    "devDependencies": {
+        "nodemon": "^1.8.1"
+    }
+}
