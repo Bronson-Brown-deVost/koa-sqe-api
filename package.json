@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "start": "ts-node ./app.ts",
-        "serve": "nodemon -e js,json,ts,tsx --exec 'ts-node' ./app.ts",
+        "dev": "nodemon -e js,json,ts,tsx --exec 'ts-node' ./app.ts",
         "prod": "pm2 start /home/bronson/.yarn/bin/ts-node --name SQE_API -- ./app.ts",
         "stop-prod": "pm2 delete SQE_API",
         "test": "echo \"Error: no test specified\" && exit 1",
