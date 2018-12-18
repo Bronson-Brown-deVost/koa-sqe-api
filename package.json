@@ -44,12 +44,15 @@
         "koa-router": "^7.1.1",
         "mariadb": "^2.0.1-beta",
         "module-alias": "^2.1.0",
+        "mysql": "^2.16.0",
         "reflect-metadata": "^0.1.12",
         "replace-in-file": "^3.4.2",
         "socket.io": "^2.1.1",
-        "typeorm": "^0.2.9"
+        "ts-node": "^7.0.1",
+        "typeorm": "^0.2.9",
+        "typescript": "^3.2.2"
     },
     "devDependencies": {
-        "nodemon": "^1.8.1"
+        "nodemon": "^1.18.8"
     }
 }
