@@ -4,7 +4,7 @@ const session = require('@controllers/session.controller')
 const svgf = require('@controllers/scroll-version-group.controller')
 const sharedVars = require('@config/shared-vars.config')
 import * as boom from 'boom'
-import * as v1_scroll from '@routes/v1/scroll'
+import * as v1_scroll_t from '@routes/v1/scroll_t'
 
 declare module 'socket.io' {
     interface Socket {
@@ -20,8 +20,9 @@ declare module 'socket.io' {
  */
 interface routes {[key: string]: {[key: string]: Function}}
 const routes: routes = {
+	"v1/scrollVersion": require('@routes/v1/scrollVersion.route'),
 	"v1/plain-js": require('@routes/v1/plain-js.route'),
-	"v1/scroll": v1_scroll,
+	"v1/scroll-t": v1_scroll_t,
 	"v1/combination": require('@routes/v1/combination.route'),
 }
 
