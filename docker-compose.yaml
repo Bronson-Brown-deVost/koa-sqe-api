@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  sqe.data:
+    image: qumranica/sqe-database:latest
+    container_name: SQE_Database
+    environment:
+      - MYSQL_ROOT_PASSWORD=none
+    expose:
+      - "3306"
+    ports:
+      - "3307:3306"
+    command: ["mysqld", "--max_connections=300", "--wait_timeout=28800"]
