@@ -154,7 +154,7 @@ someObject.doSomethingMore(2, 4, (a, b, sum) => {
 
 ### Async
 
-One of the big benefits of Javascript is its first-class suport for asynchronous operations.  This was initially achieved with callbacks, later updated with Promises, then transitioned to async/await.  Koa 2 makes full usage of async/await; if you use `await next()` instead of just `next()` you can perform further actions after othe middleware modules have worked on the request.  The following three examples do basically the same thing:
+One of the big benefits of Javascript is its first-class suport for asynchronous operations.  This was initially achieved with callbacks, later updated with Promises, then transitioned to async/await.  Koa 2 makes full usage of async/await; if you use `await next()` instead of just `next()` you can perform further actions after other middleware modules have worked on the request.  The following three examples do basically the same thing:
 
 #### Callback
 
@@ -204,16 +204,18 @@ console.log('I didn\'t get blocked from running!')
 The try/catch syntax is more similar to other languages.  You can only use `await` inside of an `async` function.  You can fire up as many `await`able functions as you want to run cuncurrently, then you can `await` them in any order, or all at once with Promise.all.
 
 ```Javascript
-const longRunningFunc = (message) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (1 !== 1) {
-        reject('The world makes no sense anymore.')
-      } else {
-        resolve(message)
-      }
-    }, 3000)
-  }) 
+const sleep = ms => new Promise(nihil => setTimeout(nihil, ms)) // Promisefy the sleep function
+const longRunningFunc = async (message) => {
+    try {
+        await sleep(3000)
+        if (1 !== 1) {
+            throw 'The world makes no sense anymore.'
+        } else {
+            return message
+        }
+    } catch(err) {
+        throw err
+    }
 }
 
 (async () => {
