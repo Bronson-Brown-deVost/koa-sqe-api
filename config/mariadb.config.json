@@ -4,5 +4,5 @@
     "port": 3307, 
     "password": "none", 
     "database": "SQE_DEV", 
-    "connectionLimit": 40
+    "connectionLimit": 100
 }

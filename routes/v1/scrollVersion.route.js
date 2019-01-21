@@ -31,7 +31,6 @@
  */
 exports.get = async (body) =>  {
     let response = {}
-    console.log(body.ownedBy)
     if (body.ownedBy) {
         if (body.ownedBy.toLowerCase() === 'user') {
             response = {userScrolls: await scrollVersionController.getUserListings(body.user_id)}
@@ -52,9 +51,10 @@ exports.get = async (body) =>  {
  * @returns {Object}    The results of the get query in the 'response' object. 
  */
 exports.find = async (body) =>  {
+    
     const broadcast = '' // You can broadcast to none '', to the user via session_id 'session_id', or to the scroll_version_group_id
     let response = ''
-    return {response: response, broadcast: broadcast}
+    return {response: await scrollVersionController.getFullModel(body.scroll_version_id), broadcast: broadcast}
 }
 
 /**
