@@ -20,6 +20,11 @@ declare module 'socket.io' {
  */
 interface routes {[key: string]: {[key: string]: Function}}
 const routes: routes = {
+	"v1/col": require('@routes/v1/col.route'),
+	"v1/text": require('@routes/v1/text.route'),
+	"v1/image": require('@routes/v1/image.route'),
+	"v1/image_col-match": require('@routes/v1/image_col-match.route'),
+	"v1/scroll_listing": require('@routes/v1/scroll_listing.route'),
 	"v1/scrollVersion": require('@routes/v1/scrollVersion.route'),
 	"v1/plain-js": require('@routes/v1/plain-js.route'),
 	"v1/scroll-t": v1_scroll_t,

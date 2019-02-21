@@ -1,6 +1,7 @@
 const mariadb = require('mariadb')
+const mysql = require('mysql')
 const settings = require('@config/mariadb.config.json')
-this.pool = mariadb.createPool({
+this.pool = mysql.createPool({
     host: settings.host, 
     user: settings.user, 
     port: settings.port, 
@@ -8,6 +9,17 @@ this.pool = mariadb.createPool({
     database: settings.database, 
     connectionLimit: settings.connectionLimit
 })
+
+
+const pquery = ( sql, args ) => {
+    return new Promise( ( resolve, reject ) => {
+        this.pool.query( sql, args, ( err, rows ) => {
+            if ( err )
+                return reject( err );
+            resolve( rows );
+        } );
+    } );
+}
 
 const endConn = exports.endConn = async (conn) => {
     try {
@@ -30,11 +42,12 @@ const getConn = exports.getConn = async () => {
 }
 
 exports.query = async (query, args) => {
-    const conn = await getConn()
-    console.log(conn)
-    const results = await conn.query(query, args)
-    endConn(conn)
+    //const conn = await getConn()
+    //const results = await this.pool.query(query, args)
+    const results = await pquery(query, args)
     return results
+    //endConn(conn)
+    
 }
 
 // This takes an array of objects: [{query: '', args:[]}].
@@ -70,3 +83,4 @@ exports.singleTransaction = async (queries) => {
 exports.closePool = async () => {
     return await this.pool.end()
 }
+

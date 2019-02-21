@@ -20,6 +20,6 @@
         }
     },
     "include": [
-        "./**/*", "../sqe-api/db/sqe-mariadb.ts"
+        "./**/*", "../sqe-api/db/sqe-mariadb.ts", "../reference-matcher/src/misc/attribute-codes.js"
     ]
 }
