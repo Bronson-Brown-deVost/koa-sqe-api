@@ -1,4 +1,4 @@
-const mariadb = require('mariadb')
+//const mariadb = require('mariadb')
 const mysql = require('mysql')
 const settings = require('@config/mariadb.config.json')
 this.pool = mysql.createPool({
@@ -14,32 +14,31 @@ this.pool = mysql.createPool({
 const pquery = ( sql, args ) => {
     return new Promise( ( resolve, reject ) => {
         this.pool.query( sql, args, ( err, rows ) => {
-            if ( err )
-                return reject( err );
-            resolve( rows );
+            if ( err ) reject( err );
+            else resolve( rows );
         } );
     } );
 }
 
-const endConn = exports.endConn = async (conn) => {
-    try {
-        await conn.end()
-    } catch (err) {
-        conn.destroy()
-        throw err
-    }
-}
+// const endConn = exports.endConn = async (conn) => {
+//     try {
+//         await conn.end()
+//     } catch (err) {
+//         conn.destroy()
+//         throw err
+//     }
+// }
 
-const getConn = exports.getConn = async () => {
-    let conn
-    try {
-        conn = await this.pool.getConnection()
-    } catch (err) {
-        throw err
-    }
+// const getConn = exports.getConn = async () => {
+//     let conn
+//     try {
+//         conn = await this.pool.getConnection()
+//     } catch (err) {
+//         throw err
+//     }
 
-    return conn
-}
+//     return conn
+// }
 
 exports.query = async (query, args) => {
     //const conn = await getConn()
@@ -51,36 +50,36 @@ exports.query = async (query, args) => {
 }
 
 // This takes an array of objects: [{query: '', args:[]}].
-exports.singleTransaction = async (queries) => {
-    const conn = getConn()
-    const results = []
-    try {
-        await conn.beginTransaction()
-    } catch (err) {
-        throw err
-    }
+// exports.singleTransaction = async (queries) => {
+//     const conn = getConn()
+//     const results = []
+//     try {
+//         await conn.beginTransaction()
+//     } catch (err) {
+//         throw err
+//     }
 
-    for (query in queries) {
-        let result
-        try {
-            result = await conn.query(query.query, query.args)
-        } catch(err) {
-            throw err
-        }
-        results.push(result)
-    }
+//     for (query in queries) {
+//         let result
+//         try {
+//             result = await conn.query(query.query, query.args)
+//         } catch(err) {
+//             throw err
+//         }
+//         results.push(result)
+//     }
     
-    try {
-        await conn.commit()
-    } catch (err) {
-        throw err
-    }
+//     try {
+//         await conn.commit()
+//     } catch (err) {
+//         throw err
+//     }
 
-    endConn(conn)
-    return results
-}
+//     endConn(conn)
+//     return results
+// }
 
-exports.closePool = async () => {
-    return await this.pool.end()
-}
+// exports.closePool = async () => {
+//     return await this.pool.end()
+// }
 

@@ -24,6 +24,7 @@
  * Exported functions.
  */
 const imageColMatch = require('@controllers/image_col_match.controller.js')
+const sharedVars = require('@config/shared-vars.config.json')
 
 /**
  * Gets a image_col-match.
@@ -57,6 +58,10 @@ exports.find = async (body) =>  {
 exports.create = async (body) =>  {
     const broadcast = '' // You can broadcast to none '', to the user via session_id 'session_id', or to the scroll_version_group_id 'scroll_version_group_id'.
     let response = ''
+    if (body.user_id && body.user_id !== sharedVars.public_id && body.col_id && body.image_catalog_id) {
+        const edition_catalog_id = await imageColMatch.createEditionListing(body.image_catalog_id, body.manuscript, body.edition_name, body.edition_volume, body.edition_location_1, body.edition_location_2,  body.edition_side, body.scroll_id)
+        response = await imageColMatch.createMatchListing(body.user_id, body.col_id, edition_catalog_id)
+    }
     return {response: response, broadcast: broadcast}
 }
 
@@ -79,6 +84,10 @@ exports.replace = async (body) =>  {
 exports.update = async (body) =>  {
     const broadcast = '' // You can broadcast to none '', to the user via session_id 'session_id', or to the scroll_version_group_id 'scroll_version_group_id'.
     let response = ''
+    console.log("User id: " + body.user_id + " " + body.edition_catalog_id + " " + body.col_id)
+    if (body.user_id && body.user_id !== sharedVars.public_id) {
+        response = await imageColMatch.confirmMatch(body.user_id, body.edition_catalog_id, body.col_id)
+    }
     return {response: response, broadcast: broadcast}
 }
 
@@ -89,6 +98,9 @@ exports.update = async (body) =>  {
  */
 exports.delete = async (body) =>  {
     const broadcast = '' // You can broadcast to none '', to the user via session_id 'session_id', or to the scroll_version_group_id 'scroll_version_group_id'.
-    let response = ''
+    let res = ''
+    if (body.col_id && body.edition_catalog_id) res = await imageColMatch.deleteMatchListing(body.col_id, body.edition_catalog_id)
+    let response = 'Success'
+    if (res === 1) response = 'Failure'
     return {response: response, broadcast: broadcast}
 }
