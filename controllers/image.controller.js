@@ -9,7 +9,7 @@ JOIN SQE_image USING(image_catalog_id)
 JOIN image_urls USING(image_urls_id)
 WHERE image_catalog.image_catalog_id = ? AND (SQE_image.type = 0 OR SQE_image.type = 1)
     `, [image_catalog_id])
-    return result.length === 2 ? result : []
+    return result.length > 0 && result.length<= 2 ? result : []
 }
 
 exports.getImageRefs = async () => {
@@ -36,11 +36,13 @@ WHERE institution = ?
     return nat.orderBy(results, [v => v.catalog_number_1], ['asc'])
 }
 
-exports.getImagePlateFragRefs = async (catalog_number_1) => {
+exports.getImagePlateFragRefs = async (catalog_number_1, institution) => {
     return await db.query(`
-SELECT DISTINCT image_catalog_id, CONCAT(catalog_number_2, " ", IF(catalog_side = 0, "(recto)", "(verso)")) AS name
+SELECT DISTINCT image_catalog_id, CONCAT(catalog_number_2, " ", IF(catalog_side = 0, "(recto)", "(verso)")) AS name,
+IF(SQE_image.sqe_image_id IS NULL, 0, 1) AS hasImage
 FROM image_catalog
-WHERE catalog_number_1 = ?
+LEFT JOIN SQE_image USING(image_catalog_id)
+WHERE catalog_number_1 = ? AND institution = ?
 ORDER BY LENGTH(catalog_number_2), catalog_number_2, catalog_side
-    `, [catalog_number_1])
+    `, [catalog_number_1, institution])
 }

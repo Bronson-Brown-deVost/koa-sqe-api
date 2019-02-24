@@ -4,23 +4,24 @@ const nat = require('natural-orderby')
 exports.getMatchListings = async (scroll_id) => {
     const result = await db.query(`
 SELECT DISTINCT CONCAT(image_catalog.institution, " ", image_catalog.catalog_number_1, ".", image_catalog.catalog_number_2, IF(image_catalog.catalog_side = 0, " (recto)", " (verso)")) AS imageInfo, 
-IF(SQE_image.sqe_image_id IS NOT NULL, '✔️', '✗') AS hasImage,
+IF(SQE_image.sqe_image_id IS NOT NULL, 1, 0) AS hasImage,
     image_catalog.image_catalog_id, 
     edition_catalog.edition_name, edition_catalog.edition_volume, edition_catalog.edition_location_1, edition_catalog.edition_location_2, IF(edition_catalog.edition_side = 0, "(recto)", "(verso)") AS edition_side, 
     edition_catalog.edition_catalog_id, 
     col_data.name AS colInfo, 
     col_data.col_id,
     scroll_to_col.scroll_id,
-    user.user_name AS user_name,
-    confirmed_by.user_name AS confirmed_by_name
+    creator.user_name AS user_name,
+    confirmed_by.user_name AS confirmed_by_name,
+    CONCAT(image_catalog.image_catalog_id, "-", edition_catalog.edition_catalog_id, "-", col_data.col_id) AS uuid
 FROM image_catalog
 JOIN image_to_edition_catalog USING(image_catalog_id)
 JOIN edition_catalog USING(edition_catalog_id)
 JOIN edition_catalog_to_col USING(edition_catalog_id)
 JOIN col_data USING(col_id)
 JOIN scroll_to_col USING(col_id)
-JOIN user ON edition_catalog_to_col.user_id = user.user_id
-LEFT JOIN user AS confirmed_by ON edition_catalog_to_col.confirmation_id = user.user_id
+JOIN user AS creator ON edition_catalog_to_col.user_id = creator.user_id
+LEFT JOIN user AS confirmed_by ON edition_catalog_to_col.confirmation_id = confirmed_by.user_id
 LEFT JOIN SQE_image USING(image_catalog_id)
 WHERE scroll_to_col.scroll_id = ?
     `, [scroll_id])

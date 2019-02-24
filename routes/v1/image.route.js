@@ -40,11 +40,11 @@ exports.get = async (body) =>  {
         case (body.listInstitution !== undefined):
             response = await image.getImageInstitutions()
             break;
+        case (body.catalog_number_1 !== undefined && body.institution !== undefined):
+            response = await image.getImagePlateFragRefs(body.catalog_number_1, body.institution)
+            break;
         case (body.institution !== undefined):
             response = await image.getImagePlateRefs(body.institution)
-            break;
-        case (body.catalog_number_1 !== undefined):
-            response = await image.getImagePlateFragRefs(body.catalog_number_1)
             break;
         default:
             response = await image.getImageRefs()
