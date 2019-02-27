@@ -25,7 +25,7 @@ LEFT JOIN user AS confirmed_by ON edition_catalog_to_col.confirmation_id = confi
 LEFT JOIN SQE_image USING(image_catalog_id)
 WHERE scroll_to_col.scroll_id = ?
     `, [scroll_id])
-    return result.length > 0 ? nat.orderBy(result, [v => v.name.split(' ')[0], v => v.name.split(' ')[1], v => v.imageInfo], ['asc', 'asc', 'asc']) : []
+    return result.length > 0 ? nat.orderBy(result, [v => v.edition_location_1, v => v.edition_location_2, v => v.imageInfo], ['asc', 'asc', 'asc']) : []
 }
 
 exports.findMatchListing = async (col_id, image_catalog_id) => {
