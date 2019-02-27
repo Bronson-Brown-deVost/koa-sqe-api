@@ -2,7 +2,13 @@ const db = require('@db/sqe-mariadb')
 const nat = require('natural-orderby')
 
 exports.getScrollListings = async () => {
-    const results = await db.query("SELECT scroll_id, name FROM scroll_data")
+    const results = await db.query(`
+SELECT scroll_id, name 
+FROM scroll_data
+JOIN scroll_data_owner USING(scroll_data_id)
+JOIN scroll_version USING(scroll_version_id)
+WHERE scroll_version.user_id = 1
+`)
     return nat.orderBy(results, [v => v.name], ['asc'])
 }
 
