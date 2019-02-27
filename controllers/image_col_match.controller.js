@@ -25,7 +25,7 @@ JOIN user AS creator ON edition_catalog_to_col.user_id = creator.user_id
 LEFT JOIN user AS confirmed_by ON edition_catalog_to_col.confirmation_id = confirmed_by.user_id
 LEFT JOIN SQE_image USING(image_catalog_id)
 WHERE scroll_to_col.scroll_id = ?
-ORDER BY col_sequence.position, image_catalog.catalog_side
+ORDER BY col_sequence.position, edition_catalog.edition_location_2, image_catalog.catalog_number_2, image_catalog.catalog_side
     `, [scroll_id])
     return result.length > 0 ? result : []
 }
