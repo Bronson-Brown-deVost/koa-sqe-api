@@ -20,12 +20,14 @@ JOIN edition_catalog USING(edition_catalog_id)
 JOIN edition_catalog_to_col USING(edition_catalog_id)
 JOIN col_data USING(col_id)
 JOIN scroll_to_col USING(col_id)
+JOIN col_sequence USING(col_id)
 JOIN user AS creator ON edition_catalog_to_col.user_id = creator.user_id
 LEFT JOIN user AS confirmed_by ON edition_catalog_to_col.confirmation_id = confirmed_by.user_id
 LEFT JOIN SQE_image USING(image_catalog_id)
 WHERE scroll_to_col.scroll_id = ?
+ORDER BY col_sequence.position
     `, [scroll_id])
-    return result.length > 0 ? nat.orderBy(result, [v => v.edition_location_1, v => v.edition_location_2, v => v.imageInfo], ['asc', 'asc', 'asc']) : []
+    return result.length > 0 ? result : []
 }
 
 exports.findMatchListing = async (col_id, image_catalog_id) => {
