@@ -68,6 +68,32 @@ ORDER BY image_catalog.institution, image_catalog.catalog_number_1, image_catalo
     `, [col_id, user_id])
 }
 
+exports.imageToColMatch = async (image_catalog_id, user_id) => {
+    return await db.query(`
+SELECT scroll_data.name, col_data.col_id, col_data.name
+FROM image_catalog
+JOIN image_to_edition_catalog USING(image_catalog_id)
+JOIN edition_catalog_owner USING(edition_catalog_id)
+JOIN edition_catalog_to_col USING(edition_catalog_id)
+JOIN col_data USING(col_id)
+JOIN col_data_owner USING(col_data_id)
+JOIN col_sequence USING(col_id)
+JOIN col_sequence_owner USING(col_sequence_id)
+JOIN scroll_to_col USING(col_id)
+JOIN scroll_to_col_owner USING(scroll_to_col_id)
+JOIN scroll_data USING(scroll_id)
+JOIN scroll_data_owner USING(scroll_data_id)
+JOIN scroll_version ON 
+    scroll_version.scroll_version_id = edition_catalog_owner.scroll_version_id
+    AND scroll_version.scroll_version_id = col_data_owner.scroll_version_id
+    AND scroll_version.scroll_version_id = scroll_to_col_owner.scroll_version_id
+    AND scroll_version.scroll_version_id = scroll_data_owner.scroll_version_id
+    AND scroll_version.scroll_version_id = col_sequence_owner.scroll_version_id
+WHERE image_catalog.image_catalog_id = ? AND (scroll_version.user_id = 1 OR scroll_version.user_id = ?)
+ORDER BY scroll_data.name, col_sequence.position
+    `, [image_catalog_id, user_id])
+}
+
 exports.confirmMatch = async (confirm_id, edition_catalog_id, col_id) => {
     return await db.query(`
 UPDATE edition_catalog_to_col 
