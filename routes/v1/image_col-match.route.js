@@ -59,8 +59,8 @@ exports.create = async (body) =>  {
     const broadcast = '' // You can broadcast to none '', to the user via session_id 'session_id', or to the scroll_version_group_id 'scroll_version_group_id'.
     let response = ''
     if (body.user_id && body.user_id !== sharedVars.public_id && body.col_id && body.image_catalog_id) {
-        const edition_catalog_id = await imageColMatch.createEditionListing(body.image_catalog_id, body.manuscript, body.edition_name, body.edition_volume, body.edition_location_1, body.edition_location_2,  body.edition_side, body.scroll_id)
-        response = await imageColMatch.createMatchListing(body.user_id, body.col_id, edition_catalog_id)
+        const res = await imageColMatch.createEditionListing(body.image_catalog_id, body.manuscript, body.edition_name, body.edition_volume, body.edition_location_1, body.edition_location_2,  body.edition_side, body.scroll_id)
+        response = {rec: await imageColMatch.createMatchListing(body.user_id, body.col_id, res.edition_catalog_id), vrs: await imageColMatch.createMatchListing(body.user_id, body.col_id, res.edition_catalog_id_rev)}
     }
     return {response: response, broadcast: broadcast}
 }
