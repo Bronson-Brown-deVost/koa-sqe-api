@@ -70,7 +70,7 @@ ORDER BY image_catalog.institution, image_catalog.catalog_number_1, image_catalo
 
 exports.imageToColMatch = async (image_catalog_id, user_id) => {
     return await db.query(`
-SELECT scroll_data.name, col_data.col_id, col_data.name
+SELECT scroll_data.name AS scroll_name, scroll_data.scroll_id, col_data.col_id, col_data.name AS col_name
 FROM image_catalog
 JOIN image_to_edition_catalog USING(image_catalog_id)
 JOIN edition_catalog_owner USING(edition_catalog_id)
