@@ -24,6 +24,7 @@
  * Exported functions.
  */
 const scrollListingController = require('@controllers/scroll_listing.controller.js')
+const imageColMatchController = require('@controllers/image_col_match.controller.js')
 
 /**
  * Gets a col.
@@ -44,7 +45,8 @@ exports.get = async (body) =>  {
 exports.find = async (body) =>  {
     const broadcast = '' // You can broadcast to none '', to the user via session_id 'session_id', or to the scroll_version_group_id
     let response = ''
-    return {response: response, broadcast: broadcast}
+    if (body.info === 'images') response = await imageColMatchController.colToImageMatch(body.col_id, body.user_id)
+    return {response: {response: response}, broadcast: broadcast}
 }
 
 /**

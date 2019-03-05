@@ -55,6 +55,18 @@ WHERE image_catalog_id = ?
     `, [image_catalog_id])
 }
 
+exports.colToImageMatch = async (col_id, user_id) => {
+    return await db.query(`
+SELECT image_catalog.image_catalog_id, image_catalog.institution, image_catalog.catalog_number_1, image_catalog.catalog_number_2, image_catalog.catalog_side
+FROM image_catalog
+JOIN image_to_edition_catalog USING(image_catalog_id)
+JOIN edition_catalog_owner USING(edition_catalog_id)
+JOIN edition_catalog_to_col USING(edition_catalog_id)
+JOIN scroll_version USING(scroll_version_id)
+WHERE edition_catalog_to_col.col_id = ? AND (scroll_version.user_id = 1 OR scroll_version.user_id = ?)
+    `, [col_id, user_id])
+}
+
 exports.confirmMatch = async (confirm_id, edition_catalog_id, col_id) => {
     return await db.query(`
 UPDATE edition_catalog_to_col 
