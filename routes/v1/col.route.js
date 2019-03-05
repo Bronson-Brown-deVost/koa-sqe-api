@@ -46,7 +46,7 @@ exports.find = async (body) =>  {
     const broadcast = '' // You can broadcast to none '', to the user via session_id 'session_id', or to the scroll_version_group_id
     let response = ''
     if (body.info && body.info === 'images' && body.col_id) response = await imageColMatchController.colToImageMatch(body.col_id, body.user_id)
-    else if (body.info && body.info === 'cols' && body.col_id) response = await imageColMatchController.imageToColMatch(body.image_catalog_id, body.user_id)
+    else if (body.info && body.info === 'cols' && body.image_catalog_id) response = await imageColMatchController.imageToColMatch(body.image_catalog_id, body.user_id)
     return {response: {response: response}, broadcast: broadcast}
 }
 
