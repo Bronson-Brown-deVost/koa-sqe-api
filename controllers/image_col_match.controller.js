@@ -113,6 +113,30 @@ ON DUPLICATE KEY UPDATE edition_catalog_id = LAST_INSERT_ID(edition_catalog_id)
 INSERT IGNORE INTO image_to_edition_catalog (image_catalog_id, edition_catalog_id)
 VALUES (?, ?)
     `, [image_catalog_id, edition_catalog_id])
+    
+    const res2 = await db.query(`
+SELECT ic2.image_catalog_id
+FROM image_catalog AS ic1
+JOIN image_catalog AS ic2
+    ON ic2.institution = ic1.institution
+    AND ic2.catalog_number_1 = ic1.catalog_number_1
+    AND ic2.catalog_number_2 = ic1.catalog_number_2
+    AND ic2.catalog_side = MOD(ic1.catalog_side + 1, 2)
+WHERE ic1.image_catalog_id = ?
+    `, [image_catalog_id])
+    if (res2.length === 1) {
+        const image_catalog_id_rev = res2[0].image_catalog_id
+        const res3 = await db.query(`
+INSERT INTO edition_catalog (manuscript, edition_name, edition_volume, edition_location_1, edition_location_2,  edition_side, scroll_id)
+VALUES (?, ?, ?, ?, ?, ?, ?)
+ON DUPLICATE KEY UPDATE edition_catalog_id = LAST_INSERT_ID(edition_catalog_id)
+    `, [manuscript, edition_name, edition_volume, edition_location_1, edition_location_2,  (edition_side + 1) % 2, scroll_id])
+        const edition_catalog_id_rev = res3.insertId
+        await db.query(`
+INSERT IGNORE INTO image_to_edition_catalog (image_catalog_id, edition_catalog_id)
+VALUES (?, ?)
+    `, [image_catalog_id_rev, edition_catalog_id_rev])
+    }
     return edition_catalog_id
 }
 
