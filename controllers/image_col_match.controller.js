@@ -64,6 +64,7 @@ JOIN edition_catalog_owner USING(edition_catalog_id)
 JOIN edition_catalog_to_col USING(edition_catalog_id)
 JOIN scroll_version USING(scroll_version_id)
 WHERE edition_catalog_to_col.col_id = ? AND (scroll_version.user_id = 1 OR scroll_version.user_id = ?)
+ORDER BY image_catalog.institution, image_catalog.catalog_number_1, image_catalog.catalog_number_2, image_catalog.catalog_side
     `, [col_id, user_id])
 }
 
