@@ -20,14 +20,14 @@ JOIN col_sequence USING(col_id)
 JOIN col_data_owner USING(col_data_id)
 JOIN scroll_version USING(scroll_version_id)
 JOIN edition_catalog_to_col USING(col_id)
-JOIN edition_catalog_to_col_confirmation USING(edition_catalog_to_col_id)
+JOIN recent_edition_catalog_to_col_confirmation USING(edition_catalog_to_col_id)
 JOIN edition_catalog USING(edition_catalog_id)
 JOIN image_to_edition_catalog USING(edition_catalog_id)
 JOIN image_catalog USING(image_catalog_id)
 JOIN user AS creator ON edition_catalog_to_col.user_id = creator.user_id
-LEFT JOIN user AS confirmed_by ON edition_catalog_to_col_confirmation.user_id = confirmed_by.user_id
+LEFT JOIN user AS confirmed_by ON recent_edition_catalog_to_col_confirmation.user_id = confirmed_by.user_id
 LEFT JOIN SQE_image USING(image_catalog_id)
-WHERE scroll_to_col.scroll_id = ? AND scroll_version.user_id = 1 AND (edition_catalog_to_col_confirmation.confirmed = 1 || (edition_catalog_to_col_confirmation.confirmed = 0 AND edition_catalog_to_col_confirmation.user_id IS NULL))
+WHERE scroll_to_col.scroll_id = ? AND scroll_version.user_id = 1 AND (recent_edition_catalog_to_col_confirmation.confirmed = 1 || (recent_edition_catalog_to_col_confirmation.confirmed = 0 AND recent_edition_catalog_to_col_confirmation.user_id IS NULL))
 ORDER BY col_sequence.position, edition_catalog.edition_location_2, image_catalog.catalog_number_2, image_catalog.catalog_side
     `, [scroll_id])
     return result.length > 0 ? result : []
@@ -37,12 +37,12 @@ exports.findMatchListing = async (col_id, image_catalog_id) => {
     return await db.query(`
 SELECT user.user_name,
     edition_catalog.manuscript, edition_catalog.edition_name, edition_catalog.edition_volume,   edition_catalog.edition_location_1, edition_catalog.edition_location_2, IF(edition_catalog.edition_side = 0, "(recto)", "(verso)") AS edition_side, edition_catalog.edition_catalog_id,
-    edition_catalog_to_col_confirmation.confirmed,
+    recent_edition_catalog_to_col_confirmation.confirmed,
     confirmed_by.user_name AS confirmed_by_name
 FROM edition_catalog_to_col
 JOIN user USING(user_id)
-JOIN edition_catalog_to_col_confirmation USING(edition_catalog_to_col_id)
-LEFT JOIN user AS confirmed_by ON edition_catalog_to_col_confirmation.user_id = confirmed_by.user_id
+JOIN recent_edition_catalog_to_col_confirmation USING(edition_catalog_to_col_id)
+LEFT JOIN user AS confirmed_by ON recent_edition_catalog_to_col_confirmation.user_id = confirmed_by.user_id
 JOIN image_to_edition_catalog USING(edition_catalog_id)
 JOIN edition_catalog USING(edition_catalog_id)
 WHERE edition_catalog_to_col.col_id = ? AND image_to_edition_catalog.image_catalog_id = ?
@@ -100,10 +100,10 @@ exports.confirmMatch = async (confirm_id, edition_catalog_id, col_id) => {
     let response
     try {
         response = await db.query(`
-UPDATE edition_catalog_to_col_confirmation
+UPDATE recent_edition_catalog_to_col_confirmation
 JOIN edition_catalog_to_col USING(edition_catalog_to_col_id)
-SET edition_catalog_to_col_confirmation.confirmed = 1,
-    edition_catalog_to_col_confirmation.user_id = ?
+SET recent_edition_catalog_to_col_confirmation.confirmed = 1,
+    recent_edition_catalog_to_col_confirmation.user_id = ?
 WHERE edition_catalog_to_col.edition_catalog_id = ?
     AND edition_catalog_to_col.col_id = ?
     `, [confirm_id, edition_catalog_id, col_id])
@@ -178,7 +178,7 @@ exports.createMatchListing = async (user_id, col_id, edition_catalog_id) => {
         const edition_catalog_to_col_id = res.insertId
         console.log(`edition_catalog_to_col_id: ${edition_catalog_to_col_id}.`)
         response = await db.query(`
-    INSERT INTO edition_catalog_to_col_confirmation (edition_catalog_to_col_id)
+    INSERT INTO recent_edition_catalog_to_col_confirmation (edition_catalog_to_col_id)
     VALUES (?)
     ON DUPLICATE KEY UPDATE edition_catalog_to_col_id = LAST_INSERT_ID(edition_catalog_to_col_id), confirmed = 0, user_id = NULL
         `,[edition_catalog_to_col_id])
@@ -193,10 +193,10 @@ exports.deleteMatchListing = async (col_id, edition_catalog_id, user_id) => {
     let res = 0
     try {
         await db.query(`
-UPDATE edition_catalog_to_col_confirmation
+UPDATE recent_edition_catalog_to_col_confirmation
 JOIN edition_catalog_to_col USING(edition_catalog_to_col_id)
-SET edition_catalog_to_col_confirmation.confirmed = 0,
-    edition_catalog_to_col_confirmation.user_id = ?
+SET recent_edition_catalog_to_col_confirmation.confirmed = 0,
+    recent_edition_catalog_to_col_confirmation.user_id = ?
 WHERE edition_catalog_to_col.edition_catalog_id = ?
     AND edition_catalog_to_col.col_id = ?
     `, [user_id, edition_catalog_id, col_id])
