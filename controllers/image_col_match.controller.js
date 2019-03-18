@@ -104,10 +104,9 @@ exports.confirmMatch = async (confirm_id, edition_catalog_id, col_id) => {
     let response
     try {
         response = await db.query(`
-UPDATE recent_edition_catalog_to_col_confirmation
-JOIN edition_catalog_to_col USING(edition_catalog_to_col_id)
-SET recent_edition_catalog_to_col_confirmation.confirmed = 1,
-    recent_edition_catalog_to_col_confirmation.user_id = ?
+INSERT INTO edition_catalog_to_col_confirmation (edition_catalog_to_col_id, confirmed, user_id)
+SELECT edition_catalog_to_col.edition_catalog_to_col_id, 1, ?
+FROM edition_catalog_to_col
 WHERE edition_catalog_to_col.edition_catalog_id = ?
     AND edition_catalog_to_col.col_id = ?
     `, [confirm_id, edition_catalog_id, col_id])

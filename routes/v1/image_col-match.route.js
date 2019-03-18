@@ -84,7 +84,6 @@ exports.replace = async (body) =>  {
 exports.update = async (body) =>  {
     const broadcast = '' // You can broadcast to none '', to the user via session_id 'session_id', or to the scroll_version_group_id 'scroll_version_group_id'.
     let response = ''
-    console.log("User id: " + body.user_id + " " + body.edition_catalog_id + " " + body.col_id)
     if (body.user_id && body.user_id !== sharedVars.public_id) {
         response = await imageColMatch.confirmMatch(body.user_id, body.edition_catalog_id, body.col_id)
     }
