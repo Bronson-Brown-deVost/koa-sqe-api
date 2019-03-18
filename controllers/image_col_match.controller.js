@@ -182,7 +182,7 @@ exports.createMatchListing = async (user_id, col_id, edition_catalog_id) => {
         response = await db.query(`
     INSERT INTO edition_catalog_to_col_confirmation (edition_catalog_to_col_id)
     VALUES (?)
-    ON DUPLICATE KEY UPDATE edition_catalog_to_col_id = LAST_INSERT_ID(edition_catalog_to_col_id), confirmed = 0, user_id = NULL
+    ON DUPLICATE KEY UPDATE edition_catalog_to_col_id = LAST_INSERT_ID(edition_catalog_to_col_id)
         `,[edition_catalog_to_col_id])
     } catch(err) {
         response = err
@@ -195,10 +195,9 @@ exports.deleteMatchListing = async (col_id, edition_catalog_id, user_id) => {
     let res = 0
     try {
         await db.query(`
-UPDATE recent_edition_catalog_to_col_confirmation
-JOIN edition_catalog_to_col USING(edition_catalog_to_col_id)
-SET recent_edition_catalog_to_col_confirmation.confirmed = 0,
-    recent_edition_catalog_to_col_confirmation.user_id = ?
+INSERT INTO edition_catalog_to_col_confirmation (edition_catalog_to_col_id, confirmed, user_id)
+SELECT edition_catalog_to_col.edition_catalog_to_col_id, 0, ?
+FROM edition_catalog_to_col
 WHERE edition_catalog_to_col.edition_catalog_id = ?
     AND edition_catalog_to_col.col_id = ?
     `, [user_id, edition_catalog_id, col_id])
