@@ -13,6 +13,7 @@ IF(SQE_image.sqe_image_id IS NOT NULL, 1, 0) AS hasImage,
     scroll_to_col.scroll_id,
     creator.user_name AS user_name,
     confirmed_by.user_name AS confirmed_by_name,
+    recent_edition_catalog_to_col_confirmation.confirmed,
     CONCAT(image_catalog.image_catalog_id, "-", edition_catalog.edition_catalog_id, "-", col_data.col_id) AS uuid
 FROM scroll_to_col
 JOIN col_data USING(col_id)
