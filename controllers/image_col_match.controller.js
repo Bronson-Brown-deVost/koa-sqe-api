@@ -60,24 +60,28 @@ WHERE image_catalog_id = ?
 
 exports.colToImageMatch = async (col_id, user_id) => {
     return await db.query(`
-SELECT image_catalog.image_catalog_id, image_catalog.institution, image_catalog.catalog_number_1, image_catalog.catalog_number_2, image_catalog.catalog_side
+SELECT image_catalog.image_catalog_id, image_catalog.institution, image_catalog.catalog_number_1, image_catalog.catalog_number_2, image_catalog.catalog_side, edition_catalog_to_col_confirmation.confirmed, user.user_name AS confirmed_by
 FROM image_catalog
 JOIN image_to_edition_catalog USING(image_catalog_id)
 JOIN edition_catalog_to_col USING(edition_catalog_id)
+JOIN edition_catalog_to_col_confirmation USING(edition_catalog_to_col_id)
+LEFT JOIN user ON user.user_id = edition_catalog_to_col_confirmation.user_id
 JOIN col_data USING(col_id)
 JOIN col_data_owner USING(col_data_id)
 JOIN scroll_version USING(scroll_version_id)
 WHERE edition_catalog_to_col.col_id = ? AND (scroll_version.user_id = 1 OR scroll_version.user_id = ?)
 ORDER BY image_catalog.institution, image_catalog.catalog_number_1, image_catalog.catalog_number_2, image_catalog.catalog_side
-    `, [col_id, user_id])
+`, [col_id, user_id])
 }
 
 exports.imageToColMatch = async (image_catalog_id, user_id) => {
     return await db.query(`
-SELECT scroll_data.name AS scroll_name, scroll_data.scroll_id, col_data.col_id, col_data.name AS col_name
+SELECT scroll_data.name AS scroll_name, scroll_data.scroll_id, col_data.col_id, col_data.name AS col_name, edition_catalog_to_col_confirmation.confirmed, user.user_name AS confirmed_by
 FROM image_catalog
 JOIN image_to_edition_catalog USING(image_catalog_id)
 JOIN edition_catalog_to_col USING(edition_catalog_id)
+JOIN edition_catalog_to_col_confirmation USING(edition_catalog_to_col_id)
+LEFT JOIN user ON user.user_id = edition_catalog_to_col_confirmation.user_id
 JOIN col_data USING(col_id)
 JOIN col_data_owner USING(col_data_id)
 JOIN col_sequence USING(col_id)
