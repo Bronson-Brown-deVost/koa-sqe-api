@@ -104,8 +104,8 @@ exports.confirmMatch = async (confirm_id, edition_catalog_id, col_id) => {
     let response
     try {
         response = await db.query(`
-INSERT INTO edition_catalog_to_col_confirmation (edition_catalog_to_col_id, confirmed, user_id)
-SELECT edition_catalog_to_col.edition_catalog_to_col_id, 1, ?
+INSERT INTO edition_catalog_to_col_confirmation (edition_catalog_to_col_id, confirmed, user_id, time)
+SELECT edition_catalog_to_col.edition_catalog_to_col_id, 1, ?, CURRENT_TIMESTAMP()
 FROM edition_catalog_to_col
 WHERE edition_catalog_to_col.edition_catalog_id = ?
     AND edition_catalog_to_col.col_id = ?
@@ -180,9 +180,8 @@ exports.createMatchListing = async (user_id, col_id, edition_catalog_id) => {
         `, [user_id, col_id, edition_catalog_id])
         const edition_catalog_to_col_id = res.insertId
         response = await db.query(`
-    INSERT INTO edition_catalog_to_col_confirmation (edition_catalog_to_col_id)
-    VALUES (?)
-    ON DUPLICATE KEY UPDATE edition_catalog_to_col_id = LAST_INSERT_ID(edition_catalog_to_col_id)
+    INSERT INTO edition_catalog_to_col_confirmation (edition_catalog_to_col_id, time)
+    VALUES (?, CURRENT_TIMESTAMP())
         `,[edition_catalog_to_col_id])
     } catch(err) {
         response = err
@@ -195,8 +194,8 @@ exports.deleteMatchListing = async (col_id, edition_catalog_id, user_id) => {
     let res = 0
     try {
         await db.query(`
-INSERT INTO edition_catalog_to_col_confirmation (edition_catalog_to_col_id, confirmed, user_id)
-SELECT edition_catalog_to_col.edition_catalog_to_col_id, 0, ?
+INSERT INTO edition_catalog_to_col_confirmation (edition_catalog_to_col_id, confirmed, user_id, time)
+SELECT edition_catalog_to_col.edition_catalog_to_col_id, 0, ?, CURRENT_TIMESTAMP()
 FROM edition_catalog_to_col
 WHERE edition_catalog_to_col.edition_catalog_id = ?
     AND edition_catalog_to_col.col_id = ?
