@@ -174,11 +174,17 @@ exports.createEditionListing = async (image_catalog_id, manuscript, edition_name
 exports.createMatchListing = async (user_id, col_id, edition_catalog_id) => {
     let response
     try {
-        response = await db.query(`
+        const res = await db.query(`
     INSERT INTO edition_catalog_to_col (user_id, col_id, edition_catalog_id)
     VALUES (?, ?, ?)
     ON DUPLICATE KEY UPDATE edition_catalog_to_col_id = LAST_INSERT_ID(edition_catalog_to_col_id)
         `, [user_id, col_id, edition_catalog_id])
+        const edition_catalog_to_col_id = res.insertId
+        response = await db.query(`
+    INSERT INTO edition_catalog_to_col_confirmation (edition_catalog_to_col_id)
+    VALUES (?)
+    ON DUPLICATE KEY UPDATE edition_catalog_to_col_id = LAST_INSERT_ID(edition_catalog_to_col_id), confirmed = 0, user_id = NULL
+        `,[edition_catalog_to_col_id])
     } catch(err) {
         response = err
     } finally {
