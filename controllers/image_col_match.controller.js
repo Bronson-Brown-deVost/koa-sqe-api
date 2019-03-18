@@ -64,7 +64,7 @@ SELECT image_catalog.image_catalog_id, image_catalog.institution, image_catalog.
 FROM image_catalog
 JOIN image_to_edition_catalog USING(image_catalog_id)
 JOIN edition_catalog_to_col USING(edition_catalog_id)
-JOIN edition_catalog_to_col_confirmation USING(edition_catalog_to_col_id)
+JOIN recent_edition_catalog_to_col_confirmation USING(edition_catalog_to_col_id)
 LEFT JOIN user ON user.user_id = edition_catalog_to_col_confirmation.user_id
 JOIN col_data USING(col_id)
 JOIN col_data_owner USING(col_data_id)
@@ -80,7 +80,7 @@ SELECT scroll_data.name AS scroll_name, scroll_data.scroll_id, col_data.col_id, 
 FROM image_catalog
 JOIN image_to_edition_catalog USING(image_catalog_id)
 JOIN edition_catalog_to_col USING(edition_catalog_id)
-JOIN edition_catalog_to_col_confirmation USING(edition_catalog_to_col_id)
+JOIN recent_edition_catalog_to_col_confirmation USING(edition_catalog_to_col_id)
 LEFT JOIN user ON user.user_id = edition_catalog_to_col_confirmation.user_id
 JOIN col_data USING(col_id)
 JOIN col_data_owner USING(col_data_id)
